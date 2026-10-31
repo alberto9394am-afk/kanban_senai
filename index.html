@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Simples - Gestão de Tarefas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- CABEÇALHO & NAVEGAÇÃO -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <h1>📋 Kanban Simples</h1>
+        <p class="subtitle">Gerenciador de tarefas com persistência local e controle de prazos</p>
+      </div>
+
+      <nav class="app-nav">
+        <a href="index.html" class="nav-link active">📋 Quadro Kanban</a>
+        <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="btn-open-column-modal" class="btn btn-secondary">
+          <span>+</span> Novo Quadro
+        </button>
+        <button id="btn-open-modal" class="btn btn-primary">
+          <span>+</span> Nova Tarefa
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAINEL DE LEGENDA / INFORMAÇÕES RÁPIDAS -->
+  <section class="legend-bar">
+    <div class="legend-item"><span class="badge badge-normal">No Prazo</span> Mais de 1 dia restante</div>
+    <div class="legend-item"><span class="badge badge-warning">Perto do Prazo</span> Vence hoje ou amanhã</div>
+    <div class="legend-item"><span class="badge badge-danger">Vencida</span> Requer nota para concluir</div>
+    <div class="legend-item"><span class="badge badge-success">Finalizada</span> Status bloqueado</div>
+  </section>
+
+  <!-- QUADRO KANBAN DINÂMICO (Colunas fixas e personalizadas) -->
+  <main class="kanban-board" id="kanban-board-container">
+    <!-- As colunas serão renderizadas dinamicamente pelo script.js -->
+  </main>
+
+  <!-- MODAL: CRIAR / EDITAR TAREFA -->
+  <div class="modal-overlay" id="task-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Nova Tarefa</h3>
+        <button class="modal-close" id="btn-close-modal" aria-label="Fechar modal">&times;</button>
+      </div>
+
+      <form id="task-form">
+        <input type="hidden" id="task-id">
+
+        <div class="form-group">
+          <label for="task-title-input">Título <span class="required">*</span></label>
+          <input type="text" id="task-title-input" required placeholder="Ex: Preparar apresentação" maxlength="80">
+        </div>
+
+        <div class="form-group">
+          <label for="task-desc-input">Descrição</label>
+          <textarea id="task-desc-input" rows="3" placeholder="Detalhes adicionais da tarefa..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-category-input">Categoria</label>
+            <input list="category-datalist" id="task-category-input" placeholder="Ex: Trabalho, Estudo..." autocomplete="off">
+            <datalist id="category-datalist">
+              <option value="Trabalho">
+              <option value="Estudo">
+              <option value="Pessoal">
+              <option value="Projetos">
+              <option value="Geral">
+            </datalist>
+          </div>
+
+          <div class="form-group">
+            <label for="task-due-date">Prazo de Conclusão <span class="required">*</span></label>
+            <input type="date" id="task-due-date" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-status-select">Quadro / Status</label>
+          <select id="task-status-select">
+            <!-- Opções geradas dinamicamente com base nas colunas cadastradas -->
+          </select>
+          <small id="status-hint" class="field-hint"></small>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO QUADRO (COLUNA PERSONALIZADA) -->
+  <div class="modal-overlay" id="column-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>+ Novo Quadro / Coluna</h3>
+        <button class="modal-close" id="btn-close-column-modal" aria-label="Fechar modal">&times;</button>
+      </div>
+
+      <form id="column-form">
+        <p class="modal-description">
+          Os quadros <strong>A Fazer</strong>, <strong>Em Execução</strong> e <strong>Finalizado</strong> são fixos. Novos quadros serão adicionados como etapas intermediárias do seu fluxo.
+        </p>
+
+        <div class="form-group">
+          <label for="column-title-input">Nome do Novo Quadro <span class="required">*</span></label>
+          <input type="text" id="column-title-input" required placeholder="Ex: Em Revisão, Testes, Bloqueado..." maxlength="30">
+        </div>
+
+        <div class="form-group">
+          <label for="column-color-select">Cor Indicadora</label>
+          <select id="column-color-select">
+            <option value="#8b5cf6">🟣 Roxo (Revisão / Inspeção)</option>
+            <option value="#ec4899">🌸 Rosa (Design / Criativo)</option>
+            <option value="#f97316">🟠 Laranja (Aguardando / Bloqueado)</option>
+            <option value="#06b6d4">🔵 Ciano (Testes / Validação)</option>
+            <option value="#64748b">⚪ Cinza (Geral)</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-column">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Criar Quadro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: JUSTIFICATIVA OBRIGATÓRIA PARA TAREFA VENCIDA -->
+  <div class="modal-overlay" id="overdue-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="danger-title">⚠️ Tarefa Vencida: Justificativa Obrigatória</h3>
+        <button class="modal-close" id="btn-close-overdue-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">
+          O prazo desta tarefa expirou. Conforme as regras do sistema, ela só pode ser finalizada mediante o preenchimento de uma nota justificando o atraso.
+        </p>
+        <div class="form-group">
+          <label for="overdue-note-input">Nota / Justificativa do Atraso <span class="required">*</span></label>
+          <textarea id="overdue-note-input" rows="3" placeholder="Ex: Atraso devido à espera de aprovação de material..." required></textarea>
+          <span class="input-error-msg" id="overdue-error-msg">Por favor, informe a justificativa para poder finalizar.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-overdue">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btn-confirm-overdue">Finalizar com Justificativa</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

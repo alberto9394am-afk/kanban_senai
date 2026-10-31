@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Métricas - Kanban Simples</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js para visualização moderna dos dados -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- CABEÇALHO & NAVEGAÇÃO -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <h1>📊 Dashboard de Métricas</h1>
+        <p class="subtitle">Visão analítica de produtividade, prazos e categorias</p>
+      </div>
+
+      <nav class="app-nav">
+        <a href="index.html" class="nav-link">📋 Quadro Kanban</a>
+        <a href="dashboard.html" class="nav-link active">📊 Dashboard</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-secondary">
+          ← Voltar ao Quadro
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    
+    <div class="dashboard-title-bar">
+      <h2>Indicadores Gerais</h2>
+      <span class="field-hint">Dados atualizados automaticamente com base no LocalStorage</span>
+    </div>
+
+    <!-- GRID DE KPIS / INDICADORES PRINCIPAIS -->
+    <section class="kpi-grid">
+      
+      <!-- 1. Concluídas -->
+      <div class="kpi-card">
+        <div class="kpi-icon icon-done">✅</div>
+        <div class="kpi-info">
+          <span class="kpi-value" id="kpi-done">0</span>
+          <span class="kpi-label">Tarefas Concluídas</span>
+        </div>
+      </div>
+
+      <!-- 2. Em Execução -->
+      <div class="kpi-card">
+        <div class="kpi-icon icon-doing">⚡</div>
+        <div class="kpi-info">
+          <span class="kpi-value" id="kpi-doing">0</span>
+          <span class="kpi-label">Tarefas em Execução</span>
+        </div>
+      </div>
+
+      <!-- 3. Pendentes -->
+      <div class="kpi-card">
+        <div class="kpi-icon icon-pending">⏳</div>
+        <div class="kpi-info">
+          <span class="kpi-value" id="kpi-pending">0</span>
+          <span class="kpi-label">Tarefas Pendentes</span>
+        </div>
+      </div>
+
+      <!-- 4. Concluídas Fora do Prazo -->
+      <div class="kpi-card">
+        <div class="kpi-icon icon-overdue-done">⚠️</div>
+        <div class="kpi-info">
+          <span class="kpi-value" id="kpi-overdue-done">0</span>
+          <span class="kpi-label">Concluídas Fora do Prazo</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- GRÁFICOS E ANÁLISE POR CATEGORIA -->
+    <section class="charts-grid">
+      
+      <!-- Gráfico de Barras: Tarefas por Categoria -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h3>📊 Quantidade de Tarefas por Categoria</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Resumo Detalhado por Categoria -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h3>🏷️ Detalhamento por Categoria</h3>
+        </div>
+        <div class="category-summary-list" id="category-summary-container">
+          <!-- Gerado dinamicamente pelo dashboard.js -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
+
